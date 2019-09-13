@@ -1,0 +1,34 @@
+version: "2"
+
+services:
+  xpeersquiz-backend:
+    image: xpeersquiz
+    build:
+      context: ./
+    container_name: xpeersquiz-backend
+    restart: always
+    labels:
+      - traefik.frontend.rule=Host:xpeers.xhub.ddns.net
+      - traefik.docker.network=web
+      - traefik.port=5000
+    environment:
+      - MONGO_DBNAME=xpeersquiz
+      - MONGO_URI=mongodb://xpeersquiz-mongo/xpeersquiz
+    depends_on:
+      - xpeersquiz-mongo
+    networks:
+      - web
+      - xpeers
+
+  xpeersquiz-mongo:
+    image: mongo
+    container_name: xpeersquiz-mongo
+    restart: always
+    volumes:
+      - /data/xpeersquiz-devoxxma:/data/db
+    networks:
+      - xpeers
+networks:
+  xpeers:
+  web:
+    external: true
